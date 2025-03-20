@@ -1,4 +1,5 @@
 import flet as ft
+import controller as c
 
 class View(object):
     def __init__(self, page: ft.Page):
@@ -8,10 +9,11 @@ class View(object):
         self.page.horizontal_alignment = 'CENTER'
         self.page.theme_mode = ft.ThemeMode.LIGHT
         # Controller
-        self.__controller = None
+        self.__controller = c.SpellChecker(view=self)
         # UI elements
         self.__title = None
         self.__theme_switch = None
+
 
         # define the UI elements and populate the page
 
@@ -28,7 +30,30 @@ class View(object):
 
         # Add your stuff here
 
-        self.page.add([])
+        #ROW1
+        self.dd = ft.Dropdown(label="Seleziona lingua",
+                    options=[ft.dropdown.Option("english"), ft.dropdown.Option("italian"), ft.dropdown.Option("spanish")],
+                            width=1250, on_change=self.__controller.handleLanguage)
+
+        row1 = ft.Row([self.dd])
+
+        #ROW2
+        self.ddSelection = ft.Dropdown(label="Seleziona modalità",
+                    options=[ft.dropdown.Option("Default"), ft.dropdown.Option("Lineare"), ft.dropdown.Option("Dicotomica")],
+                            width=300,
+                            on_change=self.__controller.handleSelection)
+
+        self.myText = ft.TextField(label="Aggiungi una frase", value="", disabled=False, width=800)
+
+        self.btnSpellCheck = ft.ElevatedButton(text="Spell Check", on_click=self.__controller.handleSpellCheck)
+
+        row2 = ft.Row([self.ddSelection, self.myText, self.btnSpellCheck])
+
+        #Row3
+
+        self.txtOut = ft.ListView(expand=1, spacing=10)
+
+        self.page.add(row1, row2, self.txtOut)
 
         self.page.update()
 

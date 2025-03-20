@@ -7,6 +7,7 @@ class SpellChecker:
     def __init__(self, view):
         self._multiDic = md.MultiDictionary()
         self._view = view
+        self._language = None
 
     def handleSentence(self, txtIn, language, modality):
         txtIn = replaceChars(txtIn.lower())
@@ -45,6 +46,45 @@ class SpellChecker:
                 return None
 
 
+    def handleLanguage(self, e):
+        print("Lingua selezionata")
+        self._view.txtOut.controls.append(ft.Text(value="Lingua selezionata correttamente: " + self._view.dd.value))
+        self._view.update()
+
+    def handleSelection(self, e):
+        self._view.txtOut.controls.append(ft.Text(value="Modalità selezionata correttamente: " + self._view.ddSelection.value))
+        self._view.update()
+
+    def handleSpellCheck(self, e):
+        frase = self._view.myText.value
+        if frase == "":
+            self._view.txtOut.controls.clear()
+            self._view.txtOut.controls.append(ft.Text(value="Add a sentence!"))
+            return
+
+        lingua = self._view.dd.value
+        print(lingua)
+        modalita = self._view.ddSelection.value
+        print(modalita)
+
+        if lingua == "":
+            self._view.txtOut.controls.clear()
+            self._view.txtOut.controls.append(ft.Text(value="Select language!"))
+            return
+        if modalita == "":
+            self._view.txtOut.controls.clear()
+            self._view.txtOut.controls.append(ft.Text(value="Select modality!"))
+            return
+
+        parole, tempo = self.handleSentence(frase, lingua, modalita)
+
+        self._view.txtOut.controls.clear()
+        self._view.txtOut.controls.append(ft.Text("Frase inserita: " + frase))
+        self._view.txtOut.controls.append(ft.Text("Parole errate: " + parole))
+        self._view.txtOut.controls.append(ft.Text(value="Tempo richiesto dalla ricerca: " + str(tempo)))
+
+        self._view.update()
+
     def printMenu(self):
         print("______________________________\n" +
               "      SpellChecker 101\n"+
@@ -57,8 +97,10 @@ class SpellChecker:
               "______________________________\n")
 
 
+
 def replaceChars(text):
     chars = "\\`*_{}[]()>#+-.!$?%^;,=_~"
     for c in chars:
         text = text.replace(c, "")
     return text
+
